@@ -75,8 +75,8 @@ def setup_dependencies():
 
 setup_dependencies()
 update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development')
+update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
 if REBUILD_FRONTEND:
     update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
-update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
-build_emastercard_frontend()
+    build_emastercard_frontend()
 build_docker_container()
