@@ -25,7 +25,7 @@ services:
   web:
     image: nginx
     volumes:
-      - ./tmp/e-Mastercard/dist:/opt/emastercard
+      - ./web/static:/opt/emastercard
       - ./web/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "8000:80"

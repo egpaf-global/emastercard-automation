@@ -5,6 +5,13 @@ import os.path
 import re
 import sys
 
+for arg in sys.argv[1:]:
+    if arg == '--rebuild-frontend':
+        REBUILD_FRONTEND = True
+        break
+else:
+    REBUILD_FRONTEND = False
+
 def run(command, die_on_fail=True):
     print('Running: {command}'.format(command=command))
     if os.system(command) == 0:
@@ -49,6 +56,7 @@ def build_emastercard_frontend():
     run('npm install')
     run('npm run build')
     os.chdir('../..')
+    run('cp -Rv tmp/e-Mastercard/dist/* web/static')
     print('-----------------')
 
 def build_docker_container():
@@ -59,12 +67,16 @@ def build_docker_container():
 def setup_dependencies():
     print('Setting up dependencies...')
     run('sudo apt-get update')
-    run('sudo apt-get install -y docker.io docker-compose git nodejs npm')
+    if REBUILD_FRONTEND:
+        run('sudo apt-get install -y docker.io docker-compose git nodejs npm')
+    else:
+        run('sudo apt-get install -y docker.io docker-compose git')
     print('-----------------')
 
 setup_dependencies()
 update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development')
-update_repo('https://github.com/HISMalawi/eMastercard2Nart')
-update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard', branch='development')
+if REBUILD_FRONTEND:
+    update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
+update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
 build_emastercard_frontend()
 build_docker_container()
