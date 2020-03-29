@@ -73,10 +73,46 @@ def setup_dependencies():
         run('sudo apt-get install -y docker.io docker-compose git')
     print('-----------------')
 
-setup_dependencies()
-update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development')
-update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
-if REBUILD_FRONTEND:
-    update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
-    build_emastercard_frontend()
+SYSTEMD_SERVICE_TEMPLATE = '''
+[Unit]
+Description = Emastercard web service
+After       = network.target
+
+[Service]
+WorkingDirectory={install_dir}
+ExecStart=bash {install_dir}/startapp.sh 
+ExecStop=/bin/kill -INT $MAINPID
+ExecReload=/bin/kill -TERM $MAINPID
+
+# In case if it gets stopped, restart it immediately
+Restart     = always
+
+Type        = simple
+
+
+[Install]
+# multi-user.target corresponds to run level 3
+# roughtly meaning wanted by system start
+WantedBy    = multi-user.target
+'''
+
+def setup_autostart():
+    print('Setting up emastercard autostart: tmp/emastercard.service')
+    with open('tmp/emastercard.service', 'w') as service_file:
+        service_file.write(SYSTEMD_SERVICE_TEMPLATE.format(install_dir=os.getcwd()))
+
+    run('sudo systemctl stop emastercard.service', die_on_fail=False)
+    run('sudo cp tmp/emastercard.service /etc/systemd/system')
+    run('sudo systemctl enable emastercard.service')
+    print('eMastercard has been set to automatically start up at boot time.')
+    print('-----------------------')
+
+
+# setup_dependencies()
+# update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development')
+# update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
+# if REBUILD_FRONTEND:
+#     update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
+#     build_emastercard_frontend()
 build_docker_container()
+setup_autostart()
