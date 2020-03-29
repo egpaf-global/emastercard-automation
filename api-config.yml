@@ -1,0 +1,19 @@
+# Mysql configurations
+default: &default
+  host: mysqldb
+  adapter: mysql2
+  username: root
+  password: password
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+  database: emastercard2
+test:
+  <<: *default
+  database: emastercard2_test
+
+production:
+  <<: *default
+  database: emastercard2_prod

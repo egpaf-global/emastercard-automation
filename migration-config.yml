@@ -1,0 +1,22 @@
+# Site prefix to be used in ARV numbers (eg LLH)
+site_prefix:
+# User to create records as:
+emr_user_id: 1
+# Current facility location id (defaults is ART Clinic - 764)
+emr_location_id: 764
+
+emastercard:
+  engine: mysql2
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root
+  database: emastercard36
+
+emr:
+  engine: mysql2
+  host: mysqldb
+  port: 3305
+  username: root
+  password: password
+  database: emastercard2
