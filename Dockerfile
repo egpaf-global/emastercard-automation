@@ -22,6 +22,9 @@ RUN chmod +x /usr/bin/migration.sh
 COPY api/initialize_database.sh /usr/bin/initialize_database.sh
 RUN chmod +x /usr/bin/initialize_database.sh
 
+COPY api/backup_database.sh /usr/bin/backup_database.sh
+RUN chmod +x /usr/bin/backup_database.sh
+
 COPY api/entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 

@@ -7,8 +7,14 @@ A set of tools to ease upgrade of emastercard 3.* to the new emastercard.
 ```bash
 ./setup.py
 ```
+- This command pulls all necessary dependencies and builds a docker container for the application.
+- The command also sets up a stub in `/usr/local/bin` for starting the application thus the
+  application can be started from anywhere by running the `emastercard` command.
 
 ## Start the application
+
+The are two ways to start the application, the following command may be run at the root of
+the `emastercard-upgrade-automation` folder.
 
 ```bash
 sudo docker-compose up
