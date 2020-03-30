@@ -56,6 +56,7 @@ def build_emastercard_frontend():
     run('npm install')
     run('npm run build')
     os.chdir('../..')
+    run('rm -Rv web/static/*')
     run('cp -Rv tmp/e-Mastercard/dist/* web/static')
     print('-----------------')
 
