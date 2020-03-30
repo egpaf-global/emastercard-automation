@@ -80,7 +80,7 @@ After       = network.target
 
 [Service]
 WorkingDirectory={install_dir}
-ExecStart=bash {install_dir}/startapp.sh 
+ExecStart=/bin/bash {install_dir}/startapp.sh 
 ExecStop=/bin/kill -INT $MAINPID
 ExecReload=/bin/kill -TERM $MAINPID
 
