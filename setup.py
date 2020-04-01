@@ -47,7 +47,7 @@ def update_repo(repository, branch='master'):
     print('------------------')
 
 def build_emastercard_frontend():
-    print('Building eMastercard fronted; this may take a while...')
+    print('Building eMastercard frontend; this may take a while...')
     emastercard_build_dir = os.path.join('e-Mastercard', 'dist')
     emastercard_install_dir = os.path.join('BHT-EMR-API', 'public')
 
@@ -105,9 +105,21 @@ def setup_autostart():
     run('sudo systemctl stop emastercard.service', die_on_fail=False)
     run('sudo cp tmp/emastercard.service /etc/systemd/system')
     run('sudo systemctl enable emastercard.service')
+    run('sudo systemctl start emastercard.service')
     print('eMastercard has been set to automatically start up at boot time.')
     print('-----------------------')
 
+
+if os.path.exists('tmp/db'):
+    # Had database files in directory users may consider clearing.
+    # Have to move to somewhere somewhat secure.
+    print('Moving database directory to /opt/emastercard...')
+    run('sudo systemctl stop emastercard', die_on_fail=False)
+
+    if not os.path.exists('/opt/emastercard'):
+        run('sudo mkdir /opt/emastercard')
+
+    run('sudo mv tmp/db /opt/emastercard')
 
 setup_dependencies()
 update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development')

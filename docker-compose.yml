@@ -6,7 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./tmp/db:/var/lib/mysql
+      - /opt/emastercard/db:/var/lib/mysql
     ports:
       - "3305:3306"
   api:
