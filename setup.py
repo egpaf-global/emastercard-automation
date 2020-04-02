@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import os
 import os.path
 import re
@@ -47,11 +48,28 @@ def update_repo(repository, branch='master'):
     print('------------------')
 
 def build_emastercard_frontend():
-    print('Building eMastercard frontend; this may take a while...')
-    emastercard_build_dir = os.path.join('e-Mastercard', 'dist')
-    emastercard_install_dir = os.path.join('BHT-EMR-API', 'public')
+    def get_frontend_version():
+        latest_commit = os.popen('git -C tmp/e-Mastercard log')\
+                          .readline()\
+                          .strip()\
+                          .replace('commit ', '')
+                          
+        return '2.0-{}'.format(latest_commit)
 
-    run('cp web/config.json tmp/e-Mastercard/public/config.json')
+    def read_frontend_config():
+        with open('web/config.json') as fin:
+            return json.loads(fin.read())
+
+    def save_frontend_config(config):
+        with open('tmp/e-Mastercard/public/config.json', 'w') as fout:
+            fout.write(json.dumps(config))
+
+    print('Building eMastercard frontend; this may take a while...')
+
+    config = read_frontend_config()
+    config['version'] = get_frontend_version()
+    save_frontend_config(config)
+    
     os.chdir('tmp/e-Mastercard')
     run('npm install')
     run('npm run build')
