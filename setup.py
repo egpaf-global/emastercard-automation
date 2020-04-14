@@ -85,7 +85,9 @@ def build_docker_container():
 
 def setup_dependencies():
     print('Setting up dependencies...')
-    run('sudo apt-get update')
+    # Some setups have messed repository sources that break the following step.
+    # Ignore the errors and just go ahead with the installation of docker.
+    run('sudo apt-get update', die_on_fail=False)
     if REBUILD_FRONTEND:
         run('sudo apt-get install -y docker.io docker-compose git nodejs npm')
     else:
