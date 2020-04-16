@@ -36,7 +36,7 @@ def update_repo(repository, branch='master'):
     if os.path.exists(dir_name):
         os.chdir(dir_name)
         run('git checkout {branch}'.format(branch=branch))
-        run('git pull origin {branch}'.format(branch=branch))
+        run('git pull -f origin {branch}'.format(branch=branch))
         os.chdir('..')
     else:
         run('git clone {repository}'.format(repository=repository))
@@ -48,28 +48,8 @@ def update_repo(repository, branch='master'):
     print('------------------')
 
 def build_emastercard_frontend():
-    def get_frontend_version():
-        latest_commit = os.popen('git -C tmp/e-Mastercard log')\
-                          .readline()\
-                          .strip()\
-                          .replace('commit ', '')
-                          
-        return '2.0-{}'.format(latest_commit)
-
-    def read_frontend_config():
-        with open('web/config.json') as fin:
-            return json.loads(fin.read())
-
-    def save_frontend_config(config):
-        with open('tmp/e-Mastercard/public/config.json', 'w') as fout:
-            fout.write(json.dumps(config))
-
     print('Building eMastercard frontend; this may take a while...')
-
-    config = read_frontend_config()
-    config['version'] = get_frontend_version()
-    save_frontend_config(config)
-    
+    update_emastercard_frontent_config()
     os.chdir('tmp/e-Mastercard')
     run('npm install')
     run('npm run build')
@@ -77,6 +57,31 @@ def build_emastercard_frontend():
     run('rm -Rv web/static/*')
     run('cp -Rv tmp/e-Mastercard/dist/* web/static')
     print('-----------------')
+
+def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/config.json'):
+    def get_frontend_version():
+        if not os.path.exists('tmp/e-Mastercard'):
+            return '4.0-dev'
+        
+        latest_commit = os.popen('git -C tmp/e-Mastercard log')\
+                          .readline()\
+                          .strip()\
+                          .replace('commit ', '')
+                          
+        return '4.0-{}'.format(latest_commit)
+
+    def read_frontend_config():
+        with open('web/config.json') as fin:
+            return json.loads(fin.read())
+
+    def save_frontend_config(config):
+        with open(deploy_path, 'w') as fout:
+            fout.write(json.dumps(config))
+
+    print('Updating frontend configuration...')
+    config = read_frontend_config()
+    config['version'] = get_frontend_version()
+    save_frontend_config(config)
 
 def build_docker_container():
     print('Building docker container...')
@@ -147,5 +152,8 @@ update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
 if REBUILD_FRONTEND:
     update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
     build_emastercard_frontend()
+else:
+    update_emastercard_frontent_config('web/static/config.json')
+
 build_docker_container()
 setup_autostart()
