@@ -32,6 +32,8 @@ sudo docker-compose exec api initialize_database.sh
 
 ## Running the migration
 
+Ensure that both the old and new emastercards are running then run the following:
+
 ```bash
 sudo docker-compose exec api migration.sh
 ```
@@ -44,3 +46,15 @@ sudo docker-compose exec api migration.sh
 ```bash
 sudo docker-compose exec api backup_database.sh > backup.sql
 ```
+
+## For developers
+
+To update the frontend's static files do the following:
+
+```bash
+$ ./setup.py --rebuild-frontend
+$ git add web/static/*
+$ git commit -m 'Some commit message'
+$ git push
+```
+
