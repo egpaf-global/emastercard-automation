@@ -107,8 +107,8 @@ After       = network.target
 [Service]
 WorkingDirectory={install_dir}
 ExecStart=/bin/bash {install_dir}/startapp.sh 
-ExecStop=/bin/kill -INT $MAINPID
-ExecReload=/bin/kill -TERM $MAINPID
+ExecStop=docker-compose down
+ExecReload=docker-compose restart
 
 # In case if it gets stopped, restart it immediately
 Restart     = always
@@ -130,9 +130,16 @@ def setup_autostart():
     run('sudo systemctl stop emastercard.service', die_on_fail=False)
     run('sudo cp tmp/emastercard.service /etc/systemd/system')
     run('sudo systemctl enable emastercard.service')
-    run('sudo systemctl start emastercard.service')
     print('eMastercard has been set to automatically start up at boot time.')
-    print('-----------------------')
+
+    if os.path.isfile('api/api-config.yml'):
+        run('sudo systemctl start emastercard.service')
+        print("Application started... Go to http://localhost:8000 to verify if application is up")
+    else:
+        print("Warning: Application not started due to missing configuration files: api/api-config.yml")
+        print("=> Please create the configuration file by copying api/api-config.yml.example and then editing the copied file accordingly")
+        print("=> Run `sudo systemctl start emastercard.service` to start the application")
+
 
 
 if os.path.exists('tmp/db'):
