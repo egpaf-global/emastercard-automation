@@ -1,1 +1,1 @@
-{"version": "4.0-6c4a54b2412c88e511a087655ce7b7da4b0ef90f", "apiURL": "127.0.0.1", "apiPort": "9000", "apiProtocol": "http"}
+{"apiURL": "127.0.0.1", "apiPort": "9000", "apiProtocol": "http", "version": "4.0-8143b430587c2579c4ee2aaf423972d4f7ae2d0f"}
