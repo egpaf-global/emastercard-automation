@@ -68,7 +68,7 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
                           .strip()\
                           .replace('commit ', '')
                           
-        return '4.0-{}'.format(latest_commit)
+        return '4.0-{}'.format(latest_commit[:7])
 
     def read_frontend_config():
         with open('web/config.json') as fin:
