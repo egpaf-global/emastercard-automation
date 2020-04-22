@@ -159,8 +159,5 @@ update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
 if REBUILD_FRONTEND:
     update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
     build_emastercard_frontend()
-else:
-    update_emastercard_frontent_config('web/static/config.json')
-
 build_docker_container()
 setup_autostart()

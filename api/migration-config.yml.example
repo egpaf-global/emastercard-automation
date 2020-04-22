@@ -16,7 +16,7 @@ emastercard:
 emr:
   engine: mysql2
   host: mysqldb
-  port: 3305
+  port: 3306
   username: root
   password: password
   database: emastercard2
