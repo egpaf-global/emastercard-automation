@@ -107,8 +107,8 @@ After       = network.target
 [Service]
 WorkingDirectory={install_dir}
 ExecStart=/bin/bash {install_dir}/startapp.sh 
-ExecStop=docker-compose down
-ExecReload=docker-compose restart
+ExecStop=/bin/bash {install_dir}/stopapp.sh
+ExecReload=/bin/bash {install_dir}/restartapp.sh
 
 # In case if it gets stopped, restart it immediately
 Restart     = always
