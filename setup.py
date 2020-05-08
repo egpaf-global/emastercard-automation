@@ -51,9 +51,9 @@ def update_repo(repository, branch='master', follow_tags=True):
 
     print('------------------')
 
-def build_emastercard_frontend():
+def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
-    update_emastercard_frontent_config()
+    update_emastercard_frontent_config(follow_tags=follow_tags)
     os.chdir('tmp/e-Mastercard')
     run('npm install')
     run('npm run build')
@@ -166,6 +166,6 @@ update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development'
 update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', follow_tags=False)
 if REBUILD_FRONTEND:
     update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', follow_tags=FOLLOW_TAGS)
-    build_emastercard_frontend()
+    build_emastercard_frontend(FOLLOW_TAGS)
 build_docker_container()
 setup_autostart()
