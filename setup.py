@@ -6,12 +6,15 @@ import os.path
 import re
 import sys
 
+REBUILD_FRONTEND = False
+FOLLOW_TAGS = True
+
 for arg in sys.argv[1:]:
     if arg == '--rebuild-frontend':
         REBUILD_FRONTEND = True
         break
-else:
-    REBUILD_FRONTEND = False
+    elif arg == '--no-follow-tags':
+        FOLLOW_TAGS = False
 
 def run(command, die_on_fail=True):
     print('Running: {command}'.format(command=command))
@@ -24,7 +27,7 @@ def run(command, die_on_fail=True):
 
     return False
 
-def update_repo(repository, branch='master'):
+def update_repo(repository, branch='master', follow_tags=True):
     '''Clones or updates a repository.'''
     print('Cloning/updating repository: {repository}'.format(repository=repository))
     if not os.path.exists('tmp'):
@@ -33,18 +36,19 @@ def update_repo(repository, branch='master'):
     os.chdir('tmp')
     dir_name = re.sub(r'.git$', '', os.path.basename(repository))
 
-    if os.path.exists(dir_name):
-        os.chdir(dir_name)
-        run('git checkout {branch}'.format(branch=branch))
-        run('git pull -f origin {branch}'.format(branch=branch))
-        os.chdir('..')
-    else:
+    if not os.path.exists(dir_name):
         run('git clone {repository}'.format(repository=repository))
-        os.chdir(dir_name)
-        run('git checkout {branch}'.format(branch=branch))
-        os.chdir('..')
 
-    os.chdir('..')
+    os.chdir(dir_name)
+    run('git checkout {}'.format(branch))
+    run('git pull -f origin {}'.format(branch))
+
+    if follow_tags:
+        run('git fetch --tags')
+        run('git checkout `git describe --tags`')
+
+    os.chdir('../..')
+
     print('------------------')
 
 def build_emastercard_frontend():
@@ -58,18 +62,22 @@ def build_emastercard_frontend():
     run('cp -Rv tmp/e-Mastercard/dist/* web/static')
     print('-----------------')
 
-def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/config.json'):
+def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/config.json', follow_tags=True):
     def get_frontend_version():
         if not os.path.exists('tmp/e-Mastercard'):
             return '4.0-dev'
-        
-        latest_commit = os.popen('git -C tmp/e-Mastercard log')\
-                          .readline()\
-                          .strip()\
-                          .replace('commit ', '')
-                          
-        return '4.0-{}'.format(latest_commit[:7])
 
+        def read_gitcmd_output(command):
+            return os.popen('git -C tmp/e-Mastercard {}'.format(command))\
+                     .readline()\
+                     .strip()
+
+        if follow_tags:
+            return read_gitcmd_output('describe')
+        else:
+            commit = read_gitcmd_output('log').replace('commit ', '')[:7]
+            return '4.0-{}'.format(commit)
+                          
     def read_frontend_config():
         with open('web/config.json') as fin:
             return json.loads(fin.read())
@@ -154,10 +162,10 @@ if os.path.exists('tmp/db'):
     run('sudo mv tmp/db /opt/emastercard')
 
 setup_dependencies()
-update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development')
-update_repo('https://github.com/HISMalawi/eMastercard2Nart.git')
+update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', follow_tags=FOLLOW_TAGS)
+update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', follow_tags=False)
 if REBUILD_FRONTEND:
-    update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development')
+    update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', follow_tags=FOLLOW_TAGS)
     build_emastercard_frontend()
 build_docker_container()
 setup_autostart()
