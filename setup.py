@@ -40,12 +40,12 @@ def update_repo(repository, branch='master', follow_tags=True):
         run('git clone {repository}'.format(repository=repository))
 
     os.chdir(dir_name)
-    run('git checkout {}'.format(branch))
+    run('git checkout -f {}'.format(branch))
     run('git pull -f origin {}'.format(branch))
 
     if follow_tags:
         run('git fetch --tags')
-        run('git checkout `git describe --tags`')
+        run('git checkout -f `git describe --tags`')
 
     os.chdir('../..')
 
