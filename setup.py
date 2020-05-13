@@ -44,7 +44,7 @@ def update_repo(repository, branch='master', follow_tags=True):
     run('git pull -f origin {}'.format(branch))
 
     if follow_tags:
-        run('git fetch --tags')
+        run('git fetch --tags -f')
         run('git checkout -f `git describe --tags`')
 
     os.chdir('../..')
