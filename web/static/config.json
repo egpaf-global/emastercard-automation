@@ -1,1 +1,1 @@
-{"version": "v4.0.0-23-g91e488f", "apiURL": "127.0.0.1", "apiPort": "9000", "apiProtocol": "http"}
+{"apiURL": "127.0.0.1", "apiPort": "9000", "apiProtocol": "http", "version": "v4.0.1"}

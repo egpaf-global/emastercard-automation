@@ -73,7 +73,7 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
                      .strip()
 
         if follow_tags:
-            return read_gitcmd_output('describe')
+            return read_gitcmd_output('describe --tags')
         else:
             commit = read_gitcmd_output('log').replace('commit ', '')[:7]
             return '4.0-{}'.format(commit)
