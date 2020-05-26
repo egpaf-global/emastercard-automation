@@ -25,6 +25,9 @@ RUN chmod +x /usr/bin/initialize_database.sh
 COPY api/backup_database.sh /usr/bin/backup_database.sh
 RUN chmod +x /usr/bin/backup_database.sh
 
+COPY api/correct_missing_dispensations.sh /usr/bin/correct_missing_dispensations.sh
+RUN chmod +x /usr/bin/correct_missing_dispensations.sh
+
 COPY api/entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 
