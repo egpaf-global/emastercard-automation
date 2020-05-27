@@ -6,6 +6,7 @@ RUN apt-get install build-essential default-mysql-client default-libmysqlclient-
 RUN mkdir /opt/BHT-EMR-API
 WORKDIR /opt/BHT-EMR-API
 COPY tmp/BHT-EMR-API/Gemfile /opt/BHT-EMR-API/Gemfile
+COPY tmp/BHT-EMR-API/Gemfile.lock /opt/BHT-EMR-API/Gemfile.lock
 RUN bundle install
 COPY tmp/BHT-EMR-API /opt/BHT-EMR-API
 
