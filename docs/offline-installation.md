@@ -14,7 +14,7 @@ application for offline installation.
         $ ./setup.py
         $ ./setup.py --cache-images
         $ cd ..
-        $ tar -cz emastercard-upgrade-automation ../emastercard-upgrade-automation.tgz
+        $ tar -cz emastercard-upgrade-automation -f ../emastercard-upgrade-automation.tgz
         ```
     - The steps above will create tarball, `emastercard-upgrade-automation.tgz,
       which can be extracted and installed on a machine without an internet connection.
