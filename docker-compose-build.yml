@@ -11,6 +11,7 @@ services:
       - "3305:3306"
   api:
     build: .
+    image: emastercard_api
     # command: bash -c "cd /opt/BHT-EMR-API && rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
     volumes:
       - ./api/api-config.yml:/opt/BHT-EMR-API/config/database.yml

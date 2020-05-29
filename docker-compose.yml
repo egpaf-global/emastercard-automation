@@ -10,7 +10,7 @@ services:
     ports:
       - "3305:3306"
   api:
-    image: emastercard-upgrade-automation_api
+    image: emastercard_api
     volumes:
       - ./api/api-config.yml:/opt/BHT-EMR-API/config/database.yml
       - ./api/migration-config.yml:/opt/eMastercard2Nart/config.yaml

@@ -86,7 +86,7 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
     config['version'] = get_frontend_version()
     save_frontend_config(config)
 
-IMAGE_NAMES = ['emastercard-upgrade-automation_api', 'nginx', 'mysql']
+IMAGE_NAMES = ['emastercard_api', 'nginx', 'mysql']
 
 def dump_images():
     print('Dumping docker images...')
