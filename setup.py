@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 
+import argparse
 import json
 import os
 import os.path
 import re
 import sys
 
-REBUILD_FRONTEND = False
 FOLLOW_TAGS = True
-
-for arg in sys.argv[1:]:
-    if arg == '--rebuild-frontend':
-        REBUILD_FRONTEND = True
-        break
-    elif arg == '--no-follow-tags':
-        FOLLOW_TAGS = False
+OFFLINE = False
+REBUILD_FRONTEND = False
 
 def run(command, die_on_fail=True):
     print('Running: {command}'.format(command=command))
@@ -91,9 +86,28 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
     config['version'] = get_frontend_version()
     save_frontend_config(config)
 
+IMAGE_NAMES = ['emastercard-upgrade-automation_api', 'nginx', 'mysql']
+
+def dump_images():
+    print('Dumping docker images...')
+    if not os.path.exists('tmp/images'):
+        os.makedirs('tmp/images')
+
+    for name in IMAGE_NAMES:
+        print('Dumping image {}'.format(name))
+        run('sudo docker save {name} -o tmp/images/{name}'.format(name=name))
+
+def load_images():
+    print("Looking for local docker images...")
+    if not os.path.exists('tmp/images'): return None
+
+    for file in os.listdir('tmp/images'):
+        print('Loading image tmp/images/{}'.format(file))
+        run('sudo docker load -i tmp/images/{}'.format(file))
+      
 def build_docker_container():
     print('Building docker container...')
-    run('sudo docker-compose build')
+    run('sudo docker-compose -f docker-compose-build.yml build')
     print('-----------------')
 
 def setup_dependencies():
@@ -148,24 +162,59 @@ def setup_autostart():
         print("=> Please create the configuration file by copying api/api-config.yml.example and then editing the copied file accordingly")
         print("=> Run `sudo systemctl start emastercard.service` to start the application")
 
+def offline_build():
+    load_images()
+    build_docker_container(offline=True)
+   
+def build():
+    if os.path.exists('tmp/db'):
+        # Had database files in directory users may consider clearing.
+        # Have to move to somewhere somewhat secure.
+        print('Moving database directory to /opt/emastercard...')
+        run('sudo systemctl stop emastercard', die_on_fail=False)
 
+        if not os.path.exists('/opt/emastercard'):
+            run('sudo mkdir /opt/emastercard')
 
-if os.path.exists('tmp/db'):
-    # Had database files in directory users may consider clearing.
-    # Have to move to somewhere somewhat secure.
-    print('Moving database directory to /opt/emastercard...')
-    run('sudo systemctl stop emastercard', die_on_fail=False)
+        run('sudo mv tmp/db /opt/emastercard')
 
-    if not os.path.exists('/opt/emastercard'):
-        run('sudo mkdir /opt/emastercard')
+    if not OFFLINE:
+        setup_dependencies()
+        update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', follow_tags=FOLLOW_TAGS)
+        update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', follow_tags=False)
+        if REBUILD_FRONTEND:
+            update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', follow_tags=FOLLOW_TAGS)
+            build_emastercard_frontend(FOLLOW_TAGS)
+        build_docker_container()
+    else:
+        load_images()
 
-    run('sudo mv tmp/db /opt/emastercard')
+    setup_autostart()
 
-setup_dependencies()
-update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', follow_tags=FOLLOW_TAGS)
-update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', follow_tags=False)
-if REBUILD_FRONTEND:
-    update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', follow_tags=FOLLOW_TAGS)
-    build_emastercard_frontend(FOLLOW_TAGS)
-build_docker_container()
-setup_autostart()
+def read_arguments():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--no-follow-tags', action='store_true', help='Build application on the latest commit/update instead of latest tag')
+    parser.add_argument('--cache-images', action='store_true', help='Dump all images into local cache to enable offline installs')
+    parser.add_argument('--offline', action='store_true', help='Attempt to build application using cached resources only')
+    parser.add_argument('--rebuild-frontend', action='store_true', help='Forces a rebuilding of the frontend')
+    
+    return parser.parse_args()
+
+def main():
+    global FOLLOW_TAGS, OFFLINE, REBUILD_FRONTEND
+
+    args = read_arguments()
+
+    if args.no_follow_tags: FOLLOW_TAGS = False
+    if args.offline: OFFLINE = True
+    if args.rebuild_frontend: REBUILD_FRONTEND = True
+
+    if args.cache_images:
+        dump_images()
+    else:
+        build()
+
+if __name__ == '__main__':
+    main()
+
