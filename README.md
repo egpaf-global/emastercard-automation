@@ -2,59 +2,155 @@
 
 A set of tools to ease upgrade of emastercard 3.* to the new emastercard.
 
-## Build and install
+## Configure the application
 
-```bash
-./setup.py
-```
-- This command pulls all necessary dependencies and builds a docker container for the application.
-- The command also sets up a stub in `/usr/local/bin` for starting the application thus the
-  application can be started from anywhere by running the `emastercard` command.
+1. Change the root database password in `docker-compose.yml` and `docker-compose-build.yml`
+   NOTE: The database password defaults to `password` which is highly insecure.
 
-## Start the application
+2. Copy the example configuration files for the api and the migration scripts.
 
-The are two ways to start the application, the following command may be run at the root of
-the `emastercard-upgrade-automation` folder.
+    ```bash
+      cp bin/api-config.yml.example bin/api-config.yml
+      cp bin/migration-config.yml.example bin/migration-config.yml
+    ```
 
-```bash
-sudo docker-compose up
-```
-- NOTE: The rest of the commands below require that this command be run first.
-  All `docker-compose exec` require the application to be running. 
+3. Edit the two configuration files created in the previous step setting the database
+   passwords for the API and the old eMastercard application.
 
-## Initializing the database
+   NOTE: In the `migration-config.yml`, the `api` is under section `emr` and the `old
+   emastercard` is under the `emastercard` section. The `site_prefix` in the
+   `migration-config.yml` has to be set for the migration to run at all. That prefix
+   is used to create patient identifiers in the migrated database. For more information
+   on what the various fields in the migration configuration file mean, see the configuration
+   section of the following: [eMastercard2Nart](https://github.com/HISMalawi/eMastercard2Nart/blob/master/README.md).
 
-```bash
-sudo docker-compose exec api initialize_database.sh
-```
+## Build and installation
 
-- WARNING: This command resets the database to a clean (and empty) state.
+NOTE: The installation requires an internet connection through out the installation process.
 
-## Running the migration
+1. The following comand builds and installs the application:
 
-Ensure that both the old and new emastercards are running then run the following:
+    ```bash
+      ./setup.py
+    ```
+   A service file that automatically starts the application is created thus the status of
+   application can be queried like so:
 
-```bash
-sudo docker-compose exec api migration.sh
-```
+    ```bash
+      sudo systemctl status emastercard
+    ```
 
-- At the end of the migration, a number of reports are dumped into the `tmp` folder
-  The reports are: migration-errors.yml, outcomes-report.csv.
+2. The setup above simply creates the application with an empty database. To initialize
+   the database execute the following:
 
-## Backing up the database
+    ```bash
+      sudo docker-compose exec api initialize_database.sh
+    ```
 
-```bash
-sudo docker-compose exec api backup_database.sh > backup.sql
-```
+  - WARNING: This command truncates all tables and loads the base metadata to the database.
+
+3. Migrating data from the old emastercard to the new one, requires that both the old emastercard
+   and new emastercard be running. To start the migration do the following:
+
+    ```bash
+      sudo docker-compose exec api migration.sh
+    ```
+
+   At the end of the migration, a number of reports are dumped into the `tmp` folder.
+   The reports are: migration-errors.yml, outcomes-report.csv.
+
+## Offline installations
+
+It's possible to use a pre-existing installation to create installers that can be used
+for offline installations. For information on how this can be done, please refer to the
+[Offline installation](docs/offline-installation.md) document.
+
+## Updating the application
+
+  ```bash
+    git pull -f origin master && ./setup.py
+  ```
+
+## Database mantainance
+
+- To `backup` the database run the following command in the `emastercard-upgrade-automation`
+  directory:
+
+    ```bash
+      sudo docker-compose exec api backup_database.sh > backup.sql
+    ```
+
+- To `restore` the database run the following command in the `emastercard-upgrade-automation`
+  directory. 
+
+    ```bash
+      sudo docker-compose exec -T api restore_database.sh < backup.sql
+    ```
+
+- To `change the database password` do the following:
+
+    ```bash
+      sudo docker-compose exec api change_database_password.sh
+    ```
+
+## Troubleshooting the application
+
+If the application is misbehaving you can try any of following things to determine what is going
+wrong and attempt to fix it depending on your problem:
+
+- Manually start the application by running the following and checking for errors in the
+  output:
+
+  ```bash
+    sudo docker-compose up
+  ```
+
+  In some cases you may notice that the application is still pulling the nginx and mysql
+  containers. These are usually pulled when the application first starts up thus why
+  an internet connection is needed through out the installation process.
+
+- Restart the application if the configuration file(s) where changed as follows:
+
+  ```bash
+    sudo systemctl restart emastercard
+  ```
+
+- Rebuild the containers as follows:
+
+  ```bash
+    sudo docker-compose -f docker-compose-build.yml build
+
+    sudo systemctl restart emastercard
+  ```
+
+- Look at past logs to see what was going wrong:
+
+  ```bash
+    sudo journalctl -u emastercard
+  ```
+
+  NOTE: If the log file gets too big and you are having problems reading the log, you can trim
+  it down like so (this leaves 7 days worth of log files):
+
+  ```bash
+    sudo journalctl --vacuum-time=7d
+  ```
+
+- In some cases you may need to run the latest updates for the application, run the following
+  command:
+
+  ```bash
+    git pull -f && ./setup.py --no-follow-tags
+  ```
 
 ## For developers
 
 To update the frontend's static files do the following:
 
-```bash
-$ ./setup.py --rebuild-frontend
-$ git add web/static/*
-$ git commit -m 'Some commit message'
-$ git push
-```
+  ```bash
+    $ ./setup.py --rebuild-frontend
+    $ git add web/static/*
+    $ git commit -m 'Some commit message'
+    $ git push
+  ```
 
