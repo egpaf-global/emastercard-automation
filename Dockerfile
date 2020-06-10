@@ -17,26 +17,26 @@ COPY tmp/eMastercard2Nart/Gemfile.lock /opt/eMastercard2Nart/Gemfile.lock
 RUN bundle install
 COPY tmp/eMastercard2Nart /opt/eMastercard2Nart
 
-COPY api/migration.sh /usr/bin/migration.sh
+COPY api/bin/migration.sh /usr/bin/migration.sh
 RUN chmod +x /usr/bin/migration.sh
 
-COPY api/initialize_database.sh /usr/bin/initialize_database.sh
+COPY api/bin/initialize_database.sh /usr/bin/initialize_database.sh
 RUN chmod +x /usr/bin/initialize_database.sh
 
-COPY api/backup_database.sh /usr/bin/backup_database.sh
+COPY api/bin/backup_database.sh /usr/bin/backup_database.sh
 RUN chmod +x /usr/bin/backup_database.sh
-COPY api/restore_database.sh /usr/bin/restore_database.sh
+COPY api/bin/restore_database.sh /usr/bin/restore_database.sh
 RUN chmod +x /usr/bin/restore_database.sh
 
-COPY api/correct_missing_dispensations.sh /usr/bin/correct_missing_dispensations.sh
+COPY api/bin/correct_missing_dispensations.sh /usr/bin/correct_missing_dispensations.sh
 RUN chmod +x /usr/bin/correct_missing_dispensations.sh
-COPY api/fix_loose_dispensations.sh /usr/bin/fix_loose_dispensations.sh
+COPY api/bin/fix_loose_dispensations.sh /usr/bin/fix_loose_dispensations.sh
 RUN chmod +x /usr/bin/fix_loose_dispensations.sh
 
-COPY api/change_database_password.sh /usr/bin/change_database_password.sh
+COPY api/bin/change_database_password.sh /usr/bin/change_database_password.sh
 RUN chmod +x /usr/bin/change_database_password.sh
 
-COPY api/entrypoint.sh /usr/bin
+COPY api/bin/entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 
 ENTRYPOINT [ "entrypoint.sh" ]
