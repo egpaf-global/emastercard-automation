@@ -10,6 +10,7 @@ import sys
 FOLLOW_TAGS = True
 OFFLINE = False
 REBUILD_FRONTEND = False
+UPDATE = False
 
 def run(command, die_on_fail=True):
     print('Running: {command}'.format(command=command))
@@ -22,8 +23,15 @@ def run(command, die_on_fail=True):
 
     return False
 
-def update_repo(repository, branch='master', follow_tags=True):
+def update_repo(repository, branch='master', tag=None):
     '''Clones or updates a repository.'''
+    def get_tag():
+        if tag is None:
+            run('git fetch --tags -f')
+            return '`git describe --tags`'
+            
+        return tag
+
     print('Cloning/updating repository: {repository}'.format(repository=repository))
     if not os.path.exists('tmp'):
         os.mkdir('tmp')
@@ -36,15 +44,24 @@ def update_repo(repository, branch='master', follow_tags=True):
 
     os.chdir(dir_name)
     run('git checkout -f {}'.format(branch))
-    run('git pull -f origin {}'.format(branch))
+    run('git pull --rebase=false -f origin {}'.format(branch))
 
-    if follow_tags:
-        run('git fetch --tags -f')
-        run('git checkout -f `git describe --tags`')
+    if FOLLOW_TAGS:
+        run('git checkout -f {}'.format(get_tag()))
 
     os.chdir('../..')
+    return read_tag(os.path.join('tmp', dir_name))
 
-    print('------------------')
+def read_gitcmd_output(repo, command):
+    return os.popen('git -C {} {}'.format(repo, command))\
+             .readline()\
+             .strip()
+
+def read_tag(repo):
+    if FOLLOW_TAGS:
+        return read_gitcmd_output('{}'.format(repo), 'describe --tags')
+    else:
+        return None
 
 def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
@@ -58,21 +75,9 @@ def build_emastercard_frontend(follow_tags):
     print('-----------------')
 
 def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/config.json', follow_tags=True):
-    def get_frontend_version():
-        if not os.path.exists('tmp/e-Mastercard'):
-            return '4.0-dev'
-
-        def read_gitcmd_output(command):
-            return os.popen('git -C tmp/e-Mastercard {}'.format(command))\
-                     .readline()\
-                     .strip()
-
-        if follow_tags:
-            return read_gitcmd_output('describe --tags')
-        else:
-            commit = read_gitcmd_output('log').replace('commit ', '')[:7]
-            return '4.0-{}'.format(commit)
-                          
+    def get_latest_commit_id():
+        return read_gitcmd_output('.', 'log').split()[1]
+                         
     def read_frontend_config():
         with open('web/config.json') as fin:
             return json.loads(fin.read())
@@ -83,7 +88,8 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
 
     print('Updating frontend configuration...')
     config = read_frontend_config()
-    config['version'] = get_frontend_version()
+    version = read_tag('.') or get_latest_commit_id()[:7]
+    config['version'] = 'docker-{}'.format(version)
     save_frontend_config(config)
 
 IMAGE_NAMES = ['emastercard_api', 'nginx', 'mysql']
@@ -107,7 +113,7 @@ def load_images():
       
 def build_docker_container():
     print('Building docker container...')
-    run('sudo docker-compose -f docker-compose-build.yml build')
+    run('sudo docker-compose -f docker-compose-build.yml build --pull')
     print('-----------------')
 
 def setup_dependencies():
@@ -162,6 +168,19 @@ def setup_autostart():
         print("=> Please create the configuration file by copying api/api-config.yml.example and then editing the copied file accordingly")
         print("=> Run `sudo systemctl start emastercard.service` to start the application")
 
+def load_tags():
+    import json
+
+    if UPDATE or not os.path.exists('TAGS'):
+        return {}
+
+    with open('TAGS') as fin:
+        return json.loads(fin.read())
+
+def save_tags(tags):
+    with open('TAGS', 'w') as fout:
+        fout.write(json.dumps(tags))
+
 def offline_build():
     load_images()
     build_docker_container(offline=True)
@@ -178,13 +197,22 @@ def build():
 
         run('sudo mv tmp/db /opt/emastercard')
 
+    if not os.path.exists('tmp'):
+        os.mkdir('tmp')
+
     if not OFFLINE:
+        tags = load_tags()
+
         setup_dependencies()
-        update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', follow_tags=FOLLOW_TAGS)
-        update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', follow_tags=False)
+        tags['BHT-EMR-API'] = update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', tag=tags.get('BHT-EMR-API'))
+        tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
-            update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', follow_tags=FOLLOW_TAGS)
+            tags['e-Mastercard'] = update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', tag=tags.get('e-Mastercard'))
             build_emastercard_frontend(FOLLOW_TAGS)
+
+        if UPDATE:
+            save_tags(tags)
+            
         build_docker_container()
     else:
         load_images()
@@ -198,17 +226,19 @@ def read_arguments():
     parser.add_argument('--cache-images', action='store_true', help='Dump all images into local cache to enable offline installs')
     parser.add_argument('--offline', action='store_true', help='Attempt to build application using cached resources only')
     parser.add_argument('--rebuild-frontend', action='store_true', help='Forces a rebuilding of the frontend')
+    parser.add_argument('--update', action='store_true', help='Updates all applications to latest updates/tags')
     
     return parser.parse_args()
 
 def main():
-    global FOLLOW_TAGS, OFFLINE, REBUILD_FRONTEND
+    global FOLLOW_TAGS, OFFLINE, REBUILD_FRONTEND, UPDATE
 
     args = read_arguments()
 
     if args.no_follow_tags: FOLLOW_TAGS = False
     if args.offline: OFFLINE = True
     if args.rebuild_frontend: REBUILD_FRONTEND = True
+    if args.update: UPDATE = True
 
     if args.cache_images:
         dump_images()
