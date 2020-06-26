@@ -223,7 +223,7 @@ def read_arguments():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--no-follow-tags', action='store_true', help='Build application on the latest commit/update instead of latest tag')
-    parser.add_argument('--cache-images', action='store_true', help='Dump all images into local cache to enable offline installs')
+    parser.add_argument('--dump-images', action='store_true', help='Dump all images into local cache to enable offline installs')
     parser.add_argument('--offline', action='store_true', help='Attempt to build application using cached resources only')
     parser.add_argument('--rebuild-frontend', action='store_true', help='Forces a rebuilding of the frontend')
     parser.add_argument('--update', action='store_true', help='Updates all applications to latest updates/tags')
@@ -240,7 +240,7 @@ def main():
     if args.rebuild_frontend: REBUILD_FRONTEND = True
     if args.update: UPDATE = True
 
-    if args.cache_images:
+    if args.dump_images:
         dump_images()
     else:
         build()
