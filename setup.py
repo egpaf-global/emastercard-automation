@@ -88,7 +88,7 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
 
     print('Updating frontend configuration...')
     config = read_frontend_config()
-    version = read_tag('.') or get_latest_commit_id()[:7]
+    version = read_tag(os.getcwd()) or get_latest_commit_id()[:7]
     config['version'] = 'docker-{}'.format(version)
     save_frontend_config(config)
 
