@@ -26,8 +26,9 @@ def run(command, die_on_fail=True):
 def update_repo(repository, branch='master', tag=None):
     '''Clones or updates a repository.'''
     def get_tag():
+        run('git fetch --tags -f')
+        
         if tag is None:
-            run('git fetch --tags -f')
             return '`git describe --tags`'
             
         return tag
