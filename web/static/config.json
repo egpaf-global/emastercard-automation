@@ -1,1 +1,1 @@
-{"version": "docker-v4.0.4-0", "apiURL": "127.0.0.1", "apiPort": "9000", "apiProtocol": "http"}
+{"apiURL": "127.0.0.1", "apiPort": "9000", "apiProtocol": "http", "version": "docker-v4.0.4-1"}
