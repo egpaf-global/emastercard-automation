@@ -206,6 +206,10 @@ def build():
 
         setup_dependencies()
         tags['BHT-EMR-API'] = update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', tag=tags.get('BHT-EMR-API'))
+        os.chdir('tmp/BHT-EMR-API')
+        run('git describe > HEAD')
+        os.chdir('../..')
+        
         tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
             tags['e-Mastercard'] = update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', tag=tags.get('e-Mastercard'))
