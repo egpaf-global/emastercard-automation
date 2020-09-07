@@ -95,8 +95,9 @@ for offline installations. For information on how this can be done, please refer
 
 ## Troubleshooting the application
 
-If the application is misbehaving you can try any of following things to determine what is going
-wrong and attempt to fix it depending on your problem:
+Below are basic instructions for troubleshooting issues with the application.
+For more detailed information on troubleshooting please visit the
+[troubleshooting](docs/troubleshooting.md) page.
 
 - Manually start the application by running the following and checking for errors in the
   output:
