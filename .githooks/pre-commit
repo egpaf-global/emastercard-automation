@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+import json
+import os
+
+
+with open('web/config.json') as fin:
+    with open('web/static/config.json', 'w') as fout:
+        print('Updating version in web/static/config.json')
+
+        config = json.loads(fin.read())
+        config['version'] = os.popen('git describe || git describe --tags')\
+                              .readlines()[-1]\
+                              .strip()
+
+        fout.write(json.dumps(config))
+
+os.system('git add web/static/config.json')
