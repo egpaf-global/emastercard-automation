@@ -207,8 +207,6 @@ def update_version(current_version, tags):
     return '{}-{}'.format(frontend_version, revision)
 
 def get_host_address():
-    import re
-
     cmd = os.popen('ip route get 8.8.8.8')
     routing_info = cmd.readline()
     if cmd.close() is not None:
@@ -222,19 +220,20 @@ def get_host_address():
     except (ValueError, IndexError):
         return '127.0.0.1'
 
-def generate_emastercard_config(emastercard_version):
+def generate_emastercard_config(emastercard_version, autodetect_host_address=False):
     with open('web/config.json') as config_template:
         with open('web/static/config.json', 'w') as config_file:
             config = json.loads(config_template.read())
             config['version'] = emastercard_version
-            config['apiURL'] = get_host_address()
+            config['apiURL'] = get_host_address() if autodetect_host_address else '127.0.0.1'
 
             config_file.write(json.dumps(config))
 
             return config
 
 def configure_host_address():
-    config = generate_emastercard_config(load_version_info()['version'])
+    print('Configuring host address...')
+    config = generate_emastercard_config(load_version_info()['version'], autodetect_host_address=True)
     print("Updated host address in web/static/config.json to {}".format(config['apiURL']))
    
 def build():
@@ -301,14 +300,14 @@ def main():
     if args.rebuild_frontend: REBUILD_FRONTEND = True
     if args.update: UPDATE = True
 
+    if args.configure_host_address:
+        configure_host_address()
+        exit()
+        
     if args.dump_images:
         dump_images()
         exit()
 
-    if args.configure_host_address:
-        configure_host_address()
-        exit()
-    
     build()
 
 if __name__ == '__main__':
