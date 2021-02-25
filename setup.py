@@ -230,6 +230,12 @@ def generate_emastercard_config(emastercard_version):
             config['apiURL'] = get_host_address()
 
             config_file.write(json.dumps(config))
+
+            return config
+
+def configure_host_address():
+    config = generate_emastercard_config(load_version_info()['version'])
+    print("Updated host address in web/static/config.json to {}".format(config['apiURL']))
    
 def build():
     if os.path.exists('tmp/db'):
@@ -281,6 +287,7 @@ def read_arguments():
     parser.add_argument('--offline', action='store_true', help='Attempt to build application using cached resources only')
     parser.add_argument('--rebuild-frontend', action='store_true', help='Forces a rebuilding of the frontend')
     parser.add_argument('--update', action='store_true', help='Updates all applications to latest updates/tags')
+    parser.add_argument('--configure-host-address', action='store_true', help='Automatically detects ip address and updates host in e-Mastecard configuration')
     
     return parser.parse_args()
 
@@ -296,8 +303,13 @@ def main():
 
     if args.dump_images:
         dump_images()
-    else:
-        build()
+        exit()
+
+    if args.configure_host_address:
+        configure_host_address()
+        exit()
+    
+    build()
 
 if __name__ == '__main__':
     main()
