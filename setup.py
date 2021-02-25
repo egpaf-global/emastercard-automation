@@ -28,7 +28,7 @@ def update_repo(repository, branch='master', tag=None):
     def get_tag():
         run('git fetch --tags -f')
         
-        if tag is None:
+        if UPDATE:
             return '`git describe --tags`'
             
         return tag
@@ -106,7 +106,9 @@ def dump_images():
 
 def load_images():
     print("Looking for local docker images...")
-    if not os.path.exists('tmp/images'): return None
+    if not os.path.exists('tmp/images'):
+        print('Error: Missing docker images in tmp/images')
+        exit(255)
 
     for file in os.listdir('tmp/images'):
         print('Loading image tmp/images/{}'.format(file))
@@ -169,22 +171,65 @@ def setup_autostart():
         print("=> Please create the configuration file by copying api/api-config.yml.example and then editing the copied file accordingly")
         print("=> Run `sudo systemctl start emastercard.service` to start the application")
 
-def load_tags():
+def load_version_info():
     import json
 
-    if UPDATE or not os.path.exists('TAGS'):
-        return {}
+    if not os.path.exists('.version'):
+        return {'tags': {}}
 
-    with open('TAGS') as fin:
-        return json.loads(fin.read())
+    with open('.version') as fin:
+        version_info = json.loads(fin.read())
+        
+        return version_info
 
-def save_tags(tags):
-    with open('TAGS', 'w') as fout:
-        fout.write(json.dumps(tags))
+def save_version_info(version_info):
+    with open('.version', 'w') as fout:
+        fout.write(json.dumps(version_info, indent=2))
 
 def offline_build():
     load_images()
-    build_docker_container(offline=True)
+    build_docker_container()
+    
+def update_version(current_version, tags):
+    if current_version is None:
+        return '0.0.1-0'
+
+    version_parts = current_version.split('-')
+    frontend_version = '-'.join(version_parts[:-1])
+    revision = int(version_parts[-1])
+    
+    if tags['e-Mastercard'] == frontend_version:
+        revision += 1
+    else:
+        frontend_version = tags['e-Mastercard']
+        revision = 0
+
+    return '{}-{}'.format(frontend_version, revision)
+
+def get_host_address():
+    import re
+
+    cmd = os.popen('ip route get 8.8.8.8')
+    routing_info = cmd.readline()
+    if cmd.close() is not None:
+        return '127.0.0.1'
+    
+    try:
+        routing_info_parts = routing_info.split(' ')
+        src_index = routing_info_parts.index('src')
+
+        return routing_info_parts[src_index + 1]
+    except (ValueError, IndexError):
+        return '127.0.0.1'
+
+def generate_emastercard_config(emastercard_version):
+    with open('web/config.json') as config_template:
+        with open('web/static/config.json', 'w') as config_file:
+            config = json.loads(config_template.read())
+            config['version'] = emastercard_version
+            config['apiURL'] = get_host_address()
+
+            config_file.write(json.dumps(config))
    
 def build():
     if os.path.exists('tmp/db'):
@@ -201,9 +246,11 @@ def build():
     if not os.path.exists('tmp'):
         os.mkdir('tmp')
 
-    if not OFFLINE:
-        tags = load_tags()
+    version_info = load_version_info()
+    version = version_info.get('version')
+    tags = version_info.get('tags', {})
 
+    if not OFFLINE:
         setup_dependencies()
         tags['BHT-EMR-API'] = update_repo('https://github.com/HISMalawi/BHT-EMR-API.git', branch='development', tag=tags.get('BHT-EMR-API'))
         os.chdir('tmp/BHT-EMR-API')
@@ -216,12 +263,14 @@ def build():
             build_emastercard_frontend(FOLLOW_TAGS)
 
         if UPDATE:
-            save_tags(tags)
+            version = update_version(version, tags)
+            save_version_info({'version': version, 'tags': tags})
             
         build_docker_container()
     else:
         load_images()
 
+    generate_emastercard_config(version)
     setup_autostart()
 
 def read_arguments():
