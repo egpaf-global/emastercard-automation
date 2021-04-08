@@ -1,7 +1,7 @@
 FROM ruby:2.5.3
 
-RUN apt-get update -qq
-RUN apt-get install build-essential default-mysql-client default-libmysqlclient-dev -y
+RUN apt-get update
+RUN apt-get install build-essential default-mysql-client default-libmysqlclient-dev pv -y
 
 RUN mkdir /opt/BHT-EMR-API
 WORKDIR /opt/BHT-EMR-API

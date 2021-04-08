@@ -9,6 +9,10 @@ BHT-EMR-API or eMastercard2Nart gets updated then the tag will get bumped up to 
 
 ## Unreleased
 
+### Changed
+
+- Added progress bar to restore_database.sh script.
+
 ## [v4.0.14-0] 2021-03-27
 
 ### Changed

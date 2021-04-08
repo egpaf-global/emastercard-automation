@@ -11,5 +11,13 @@ PASSWORD=`ruby -ryaml -e "puts YAML::load_file('/opt/BHT-EMR-API/config/database
 DATABASE=`ruby -ryaml -e "puts YAML::load_file('/opt/BHT-EMR-API/config/database.yml')['development']['database']"`
 HOST=`ruby -ryaml -e "puts YAML::load_file('/opt/BHT-EMR-API/config/database.yml')['development']['host']"`
 
+cd /opt/BHT-EMR-API
+
+echo "Dropping existing database..."
+rails db:drop
+
+echo "Creating new database..."
+rails db:create
+
 echo "Restoring backup..."
-cat | mysql --user=$USERNAME --password=$PASSWORD --host=$HOST $DATABASE
+pv -f | mysql --user=$USERNAME --password=$PASSWORD --host=$HOST $DATABASE
