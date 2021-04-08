@@ -13,6 +13,8 @@ BHT-EMR-API or eMastercard2Nart gets updated then the tag will get bumped up to 
 
 ### Changed
 
+- Bumped up BHT-EMR-API to v4.0.27
+    * See the [Changelog](https://github.com/HISMalawi/BHT-EMR-API/blob/development/CHANGELOG.md#41028---2021-04-07)
 - Added progress bar to restore_database.sh script.
 
 ## [v4.0.14-0] 2021-03-27
