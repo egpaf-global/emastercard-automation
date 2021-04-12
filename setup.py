@@ -120,12 +120,11 @@ def build_docker_container():
     print('-----------------')
     
 def check_docker_compose_version(target_version):
-    version_string = os.popen('docker-compose --version').readline()
+    version_string = os.popen('docker-compose --version').readline().strip()
     if not version_string:
         return None
 
-    version = re.match(r'docker-compose version\s+(.*),.*$', version_string)[1]
-    return version == target_version
+    return re.match(r'docker-compose version\s+{},.*$'.format(target_version), version_string) != None
 
 def install_docker_compose():
     print('Checking docker-compose version...')
