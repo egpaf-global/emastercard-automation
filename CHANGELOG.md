@@ -9,6 +9,10 @@ BHT-EMR-API or eMastercard2Nart gets updated then the tag will get bumped up to 
 
 ## Unreleased
 
+## [v4.0.16-3] 2021-03-12
+
+- Fixed inability to load MySQL backups when using docker-compose version < 1.20.0
+
 ## [v4.0.16-2] 2021-03-10
 
 - Bumped up BHT-EMR-API to v4.10.31
