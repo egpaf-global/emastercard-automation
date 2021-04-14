@@ -133,6 +133,7 @@ def install_docker_compose():
         print('Found docker-compose version {}'.format(version))
         return None
     print('Installing docker-compose version {}'.format(version))
+    run('sudo apt-get install -y curl')
     isa = os.popen('uname -m').readline().strip()
     run('sudo curl -L "https://github.com/docker/compose/releases/download/1.29.0/docker-compose-Linux-{}" -o /usr/local/bin/docker-compose'.format(isa))
     run('sudo chmod +x /usr/local/bin/docker-compose')
@@ -142,8 +143,7 @@ def setup_dependencies():
     # Some setups have messed repository sources that break the following step.
     # Ignore the errors and just go ahead with the installation of docker.
     run('sudo apt-get update', die_on_fail=False)
-    run('sudo apt-get install ')
-    run('sudo apt-get install -y docker.io python3-pip git')
+    run('sudo apt-get install -y docker.io git')
     install_docker_compose()
     if REBUILD_FRONTEND:
         run('sudo apt-get install -y nodejs npm')
