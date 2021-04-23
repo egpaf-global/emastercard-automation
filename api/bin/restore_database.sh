@@ -21,3 +21,8 @@ rails db:create
 
 echo "Restoring backup..."
 pv -f | mysql --user=$USERNAME --password=$PASSWORD --host=$HOST $DATABASE
+
+echo "Loading metadata..."
+cd /opt/BHT-EMR-API
+bin/update_art_metadata.sh development
+
