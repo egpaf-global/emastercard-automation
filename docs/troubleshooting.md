@@ -159,3 +159,70 @@ the file back to 700 or purging docker and reinstalling as follows:
 
     ./setup.py
   ```
+  
+### Internal Server Error -  #<ActiveRecord::StatementInvalid: Table table_name doesn't exist
+
+This can be caused by multiple issues, but in mostly it's a result
+of either the database being empty or the specific table being corrupted.
+
+You can verify if there is data in the database by manually logging
+into the database and checking if the main data tables exist. You can
+do this as follows:
+
+```sh
+
+$ sudo docker-compose exec api bash
+
+$ cd /opt/BHT-EMR-API
+
+$ rails dbconsole   # Then enter database password
+
+mysql> SELECT count(*) FROM encounter;  # Check if result is greater than 0 
+
+mysql> SELECT count(*) FROM obs;  # Must be significantly larger than the above
+
+mysql> SELECT count(*) FROM patient;
+
+```
+
+If the above leads you to believing that the database is not empty then proceed
+to the following section otherwise just load the most recent dump of the database
+that you have.
+
+To check if some tables are corrupt, you need to first stop emastercard then
+manually start it and check the logs focusing primarily on the mysql logs.
+
+```sh
+
+sudo systemctl stop emastercard
+
+sudo docker-compose up
+
+```
+
+Look for lines similar to `mysqldb_1 | 2021-01-01 23:59:00` and look for any errors
+to do with the table in question. You may see MySQL complaining about an ibd or
+frm file for the table. To fix this you simply need to remove the table's frm file
+and then restart emastercard.
+
+```sh
+
+sudo su
+
+cd /opt/emastercard/db/<name of database>
+
+mv <table name>.frm ~   # This is just to back up the file, remove it afterwards
+
+exit
+
+sudo systemctl stop emastercard
+
+sudo docker-compose up # Look for the ibd and frm errors from MySQL.
+
+```
+
+If the last command above does not give the same error as before then
+probably the problem has been resolved. You should verify whether
+emastercard is now functioning correctly.
+
+As a last resort you can load the last backup you have for the site.
