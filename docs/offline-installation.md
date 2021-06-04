@@ -12,12 +12,11 @@ application for offline installation.
         ```bash
         $ git pull
         $ ./setup.py
-        $ ./setup.py --cache-images
-        $ cd ..
-        $ tar -cz emastercard-upgrade-automation -f ../emastercard-upgrade-automation.tgz
+        $ ./setup.py --package-for-offline
         ```
-    - The steps above will create tarball, `emastercard-upgrade-automation.tgz,
-      which can be extracted and installed on a machine without an internet connection.
+    - The steps above will create a tarball named `emastercard-upgrade-automation.tgz` in
+      the tmp folder. This tarball can be transferred to and installed on machines
+      without an internet connection. 
 
 2. Installing the image
     - Requirements:
@@ -37,11 +36,19 @@ application for offline installation.
       in `api/migration-config.yml`.
 
     - Install the application as follows:
+
         ```
         $ ./setup.py --offline
-        $ sudo docker-compose exec api initialize_database.sh
         ```
+        
+    - If this is a completely new installation not an update then you should do
+      the following:
+
+      ```
+      % sudo docker-compose exec api initialize_database.sh
+      ```
 
     - Once the installation completes go to http://localhost:8000 in your browser to
-      verify that application is up and running.
+      verify that application is up and running. NOTE: For new installations you should
+      proceed with the steps 
     

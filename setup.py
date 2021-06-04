@@ -10,6 +10,7 @@ import sys
 FOLLOW_TAGS = True
 OFFLINE = False
 REBUILD_FRONTEND = False
+SYSTEMD_CONFIG = True   # Configure systemd to autostart the emastercard application
 UPDATE = False
 
 def run(command, die_on_fail=True):
@@ -95,7 +96,7 @@ def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/conf
 
 IMAGE_NAMES = ['emastercard_api', 'nginx', 'mysql']
 
-def dump_images():
+def make_offline_package():
     print('Dumping docker images...')
     if not os.path.exists('tmp/images'):
         os.makedirs('tmp/images')
@@ -103,6 +104,11 @@ def dump_images():
     for name in IMAGE_NAMES:
         print('Dumping image {}'.format(name))
         run('sudo docker save {name} -o tmp/images/{name}'.format(name=name))
+        
+    print('Packaging to emastercard.tgz...')
+    run("sudo bash -c 'tar -czvf tmp/emastercard-upgrade-automation.tgz $(git ls-files) tmp/images/ .git/'")
+    run('sudo chmod a+rw tmp/emastercard-upgrade-automation.tgz')
+    print('Package successfully created at tmp/emastercard-upgrade-automation.tgz')
 
 def load_images():
     print("Looking for local docker images...")
@@ -213,16 +219,22 @@ def update_version(current_version, tags):
     if current_version is None:
         return '0.0.1-0'
 
-    version_parts = current_version.split('-')
+    version_parts = current_version.split('-', 1)
     frontend_version = '-'.join(version_parts[:-1])
-    revision = int(version_parts[-1])
+    
+    if not version_parts[-1].isdigit():
+        _codename, revision = version_parts[-1].split('-')
+    else:
+        revision = version_parts[-1]
+        
+    revision = int(revision)
     
     if tags['e-Mastercard'] == frontend_version:
         revision += 1
     else:
         frontend_version = tags['e-Mastercard']
         revision = 0
-
+        
     return '{}-{}'.format(frontend_version, revision)
 
 def get_host_address():
@@ -295,22 +307,25 @@ def build():
         load_images()
 
     generate_emastercard_config(version)
-    setup_autostart()
+
+    if SYSTEMD_CONFIG:
+        setup_autostart()
 
 def read_arguments():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--configure-host-address', action='store_true', help='Automatically detects ip address and updates host in e-Mastecard configuration')
+    parser.add_argument('--package-for-offline', action='store_true', help='Creates a package for offline installations')
     parser.add_argument('--no-follow-tags', action='store_true', help='Build application on the latest commit/update instead of latest tag')
-    parser.add_argument('--dump-images', action='store_true', help='Dump all images into local cache to enable offline installs')
+    parser.add_argument('--no-systemd-config', action='store_true', help='Disables creation/update of unit file for systemd')
     parser.add_argument('--offline', action='store_true', help='Attempt to build application using cached resources only')
     parser.add_argument('--rebuild-frontend', action='store_true', help='Forces a rebuilding of the frontend')
     parser.add_argument('--update', action='store_true', help='Updates all applications to latest updates/tags')
-    parser.add_argument('--configure-host-address', action='store_true', help='Automatically detects ip address and updates host in e-Mastecard configuration')
     
     return parser.parse_args()
 
 def main():
-    global FOLLOW_TAGS, OFFLINE, REBUILD_FRONTEND, UPDATE
+    global FOLLOW_TAGS, OFFLINE, REBUILD_FRONTEND, SYSTEMD_CONFIG, UPDATE
 
     args = read_arguments()
 
@@ -318,13 +333,14 @@ def main():
     if args.offline: OFFLINE = True
     if args.rebuild_frontend: REBUILD_FRONTEND = True
     if args.update: UPDATE = True
+    if args.no_systemd_config: SYSTEMD_CONFIG = False
 
     if args.configure_host_address:
         configure_host_address()
         exit()
         
-    if args.dump_images:
-        dump_images()
+    if args.package_for_offline:
+        make_offline_package()
         exit()
 
     build()
