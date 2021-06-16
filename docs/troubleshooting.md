@@ -226,3 +226,26 @@ probably the problem has been resolved. You should verify whether
 emastercard is now functioning correctly.
 
 As a last resort you can load the last backup you have for the site.
+
+### Internal Server Error - ... Table xxxx.xxxx corrupted...
+
+Have mysql attempt to auto repair the corrupted tables
+
+  ```bash
+
+    sudo docker-compose exec mysqldb mysqlcheck --auto-repair -A -u root -p
+    sudo systemctl restart emastercard
+    mysqlcheck 
+
+  ```
+
+Manually repair the corrupted table
+
+  ```bash
+    bash> sudo docker-compose exec mysqldb mysql -u root -p mysql
+
+    mysql> REPAIR TABLE proc;
+    mysql> QUIT;
+
+    bash> sudo systemctl restart emastercard
+  ```
