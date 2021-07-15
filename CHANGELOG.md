@@ -9,6 +9,12 @@ BHT-EMR-API or eMastercard2Nart gets updated then the tag will get bumped up to 
 
 ## Unreleased
 
+## [v4.1.0-3]
+
+### Changed
+
+- Bumped up BHT-EMR-API to v4.11.3
+
 ## [v4.1.0-2]
 
 ### Changed
