@@ -21,6 +21,9 @@ services:
       - mysqldb
     links:
       - mysqldb:mysqldb
+    environment:
+      WEB_CONCURRENCY: 6
+      RAILS_MAX_THREADS: 1
   web:
     image: nginx
     volumes:
