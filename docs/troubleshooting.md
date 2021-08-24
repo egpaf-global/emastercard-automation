@@ -160,7 +160,7 @@ the file back to 700 or purging docker and reinstalling as follows:
     ./setup.py
   ```
   
-### Internal Server Error -  #<ActiveRecord::StatementInvalid: Table table_name doesn't exist
+### Internal Server Error - #&lt;ActiveRecord::StatementInvalid: Table table_name doesn't exist
 
 This can be caused by multiple issues, but in mostly it's a result
 of either the database being empty or the specific table being corrupted.
@@ -227,7 +227,7 @@ emastercard is now functioning correctly.
 
 As a last resort you can load the last backup you have for the site.
 
-### Internal Server Error - ... Table <database>.<table> corrupted...
+### Internal Server Error - ... Table &lt;database&gt;.&lt;table&gt; corrupted...
 
 Have mysql attempt to auto repair the corrupted tables
 
@@ -250,7 +250,7 @@ Manually repair the corrupted table
     bash> sudo systemctl restart emastercard
   ```
 
-### ERROR: for emastercard-upgrade-automation_<service_name>_1 Cannot start service <service_name>: container is marked for removal and cannot be started
+### ERROR: for emastercard-upgrade-automation_&lt;service_name&gt;_1 Cannot start service &lt;service_name&gt;: container is marked for removal and cannot be started
 
 The primary cause for this is temporary containers that were not properly
 cleaned up during the last docker shutdown process. This is normally resolved
