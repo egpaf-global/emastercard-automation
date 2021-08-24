@@ -249,3 +249,46 @@ Manually repair the corrupted table
 
     bash> sudo systemctl restart emastercard
   ```
+
+### ERROR: for emastercard-upgrade-automation_<service_name>_1 Cannot start service <service_name>: container is marked for removal and cannot be started
+
+The primary cause for this is temporary containers that were not properly
+cleaned up during the last docker shutdown process. This is normally resolved
+by removing the problematic containers and rebuilding the application. You can
+do this as follows:
+
+Stop the systemd service
+
+  ```bash
+
+    sudo systemctl stop emastercard
+
+  ```
+
+Remove the problematic container(s). You have to do this for all services
+listed in the log.
+
+  ```bash
+
+    sudo docker-compose rm -f -s <service_name>
+
+  ```
+  
+Rebuild everything
+
+  ```bash
+  
+    sudo docker-compose -f docker-compose-build.yml build --no-cache 
+    
+  ```
+
+Manually restart the application and check for errors
+
+  ```bash
+  
+    sudo docker-compose up
+
+  ```
+  
+If the above command starts the application without issues then you
+are good. You can close it and restart the systemd service.
