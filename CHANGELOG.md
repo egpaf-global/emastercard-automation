@@ -9,6 +9,10 @@ BHT-EMR-API or eMastercard2Nart gets updated then the tag will get bumped up to 
 
 ## Unreleased
 
+### Added
+
+- Check for npm before attempting to install it
+
 ## [v4.2.1-0] - 2021-09-04
 
 - Bumped up e-Mastercard to [v4.2.1](https://github.com/EGPAFMalawiHIS/e-Mastercard/releases/tag/v4.2.1)

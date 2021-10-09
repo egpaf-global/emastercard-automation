@@ -151,8 +151,8 @@ def setup_dependencies():
     run('sudo apt-get update', die_on_fail=False)
     run('sudo apt-get install -y docker.io git')
     install_docker_compose()
-    if REBUILD_FRONTEND:
-        run('sudo apt-get install -y nodejs npm')
+    if REBUILD_FRONTEND and os.system('npm --version') != 0:
+        run('sudo apt-get install -y nodejs npm', die_on_fail=False) # Not sma
     print('-----------------')
 
 SYSTEMD_SERVICE_TEMPLATE = '''
