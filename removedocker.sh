@@ -1,5 +1,9 @@
 # first of all do a backup of the database
 sudo docker-compose exec api backup_database.sh > backup.sql
+# we need to stop the service here
+sudo systemctl stop emastercard
+# we need to disable the service here
+sudo systemctl disable emastercard
 # second remove docker
 sudo apt-get remove docker docker-engine docker.io containerd runc
 # Third remove docker engine and the likes

@@ -10,13 +10,6 @@ COPY tmp/BHT-EMR-API/vendor /opt/BHT-EMR-API/vendor
 RUN bundle install --local
 COPY tmp/BHT-EMR-API /opt/BHT-EMR-API
 
-RUN mkdir /opt/eMastercard2Nart
-WORKDIR /opt/eMastercard2Nart
-COPY tmp/eMastercard2Nart/Gemfile /opt/eMastercard2Nart/Gemfile
-COPY tmp/eMastercard2Nart/Gemfile.lock /opt/eMastercard2Nart/Gemfile.lock
-RUN bundle install
-COPY tmp/eMastercard2Nart /opt/eMastercard2Nart
-
 COPY api/bin/migration.sh /usr/bin/migration.sh
 RUN chmod +x /usr/bin/migration.sh
 
