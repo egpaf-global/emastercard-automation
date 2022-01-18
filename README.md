@@ -10,8 +10,8 @@ A set of tools to ease upgrade of emastercard 3.* to the new emastercard.
 2. Copy the example configuration files for the api and the migration scripts.
 
     ```bash
-      cp bin/api-config.yml.example bin/api-config.yml
-      cp bin/migration-config.yml.example bin/migration-config.yml
+      cp api/api-config.yml.example api/api-config.yml
+      cp api/migration-config.yml.example api/migration-config.yml
     ```
 
 3. Edit the two configuration files created in the previous step setting the database
@@ -142,6 +142,12 @@ For more detailed information on troubleshooting please visit the
 
   ```bash
     git pull -f && ./setup.py --no-follow-tags
+  ```
+- In some cases the setup my crush and continue to show you errors. In such scenarios you can use
+  this script to remove docker completely and do a fresh install:
+
+  ```bash
+    ./removedocker.sh
   ```
 
 ## For developers
