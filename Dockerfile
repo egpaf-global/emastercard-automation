@@ -16,13 +16,18 @@ RUN chmod +x /usr/bin/migration.sh
 COPY api/bin/initialize_database.sh /usr/bin/initialize_database.sh
 RUN chmod +x /usr/bin/initialize_database.sh
 
+COPY api/bin/update_metadata.sh /usr/bin/update_metadata.sh
+RUN chmod +x /usr/bin/update_metadata.sh
+
 COPY api/bin/backup_database.sh /usr/bin/backup_database.sh
 RUN chmod +x /usr/bin/backup_database.sh
+
 COPY api/bin/restore_database.sh /usr/bin/restore_database.sh
 RUN chmod +x /usr/bin/restore_database.sh
 
 COPY api/bin/correct_missing_dispensations.sh /usr/bin/correct_missing_dispensations.sh
 RUN chmod +x /usr/bin/correct_missing_dispensations.sh
+
 COPY api/bin/fix_loose_dispensations.sh /usr/bin/fix_loose_dispensations.sh
 RUN chmod +x /usr/bin/fix_loose_dispensations.sh
 
