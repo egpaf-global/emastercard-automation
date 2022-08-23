@@ -37,6 +37,9 @@ RUN chmod +x /usr/bin/change_database_password.sh
 COPY api/bin/entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 
+COPY api/bin/fix_viral_load_results.sh /usr/bin/fix_viral_load_results.sh
+RUN chmod +x /usr/bin/fix_viral_load_results.sh
+
 ENTRYPOINT [ "entrypoint.sh" ]
 EXPOSE 3000
 
