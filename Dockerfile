@@ -34,6 +34,9 @@ RUN chmod +x /usr/bin/fix_loose_dispensations.sh
 COPY api/bin/change_database_password.sh /usr/bin/change_database_password.sh
 RUN chmod +x /usr/bin/change_database_password.sh
 
+COPY api/bin/fix_vl_ldl_results.sh /usr/bin/fix_vl_ldl_results.sh
+RUN chmod +x /usr/bin/fix_vl_ldl_results.sh
+
 COPY api/bin/entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 
