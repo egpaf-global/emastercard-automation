@@ -161,3 +161,11 @@ To update the frontend's static files do the following:
     $ git push
   ```
 
+## Automation Scripts
+
+#### Update viral load results bearing =1 to =LDL
+- The script migrates all `HIV viral load` results `=1` to `=LDL`. to run the script, please type the following command
+
+```bash
+sh vl_ldl_fix.sh
+```
