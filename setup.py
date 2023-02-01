@@ -67,32 +67,34 @@ def read_tag(repo):
 
 def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
-    update_emastercard_frontent_config(follow_tags=follow_tags)
-    os.chdir('tmp/e-Mastercard')
-    run('npm install')
-    run('npm run build')
+    # update_emastercard_frontent_config(follow_tags=follow_tags)
+    os.chdir('tmp/HIS-Core-release')
+    #run('npm install')
+    #run('npm run build')
     os.chdir('../..')
+    # os.system('ls')
     run('rm -Rv web/static/*')
-    run('cp -Rv tmp/e-Mastercard/dist/* web/static')
+    run('cp -Rv tmp/HIS-Core-release/* web/static')
+    run('cp -v web/static/emc.config.json.example web/static/config.json')
     print('-----------------')
 
-def update_emastercard_frontent_config(deploy_path='tmp/e-Mastercard/public/config.json', follow_tags=True):
-    def get_latest_commit_id():
-        return read_gitcmd_output('.', 'log').split()[1]
+# def update_emastercard_frontent_config(deploy_path='tmp/HIS-Core-release/config.json', follow_tags=True):
+#     def get_latest_commit_id():
+#         return read_gitcmd_output('.', 'log').split()[1]
                          
-    def read_frontend_config():
-        with open('web/config.json') as fin:
-            return json.loads(fin.read())
+#     def read_frontend_config():
+#         with open('web/config.json') as fin:
+#             return json.loads(fin.read())
 
-    def save_frontend_config(config):
-        with open(deploy_path, 'w') as fout:
-            fout.write(json.dumps(config))
+#     def save_frontend_config(config):
+#         with open(deploy_path, 'w') as fout:
+#             fout.write(json.dumps(config))
 
-    print('Updating frontend configuration...')
-    config = read_frontend_config()
-    version = read_tag(os.getcwd()) or get_latest_commit_id()[:7]
-    config['version'] = 'docker-{}'.format(version)
-    save_frontend_config(config)
+#     print('Updating frontend configuration...')
+#     config = read_frontend_config()
+#     version = read_tag(os.getcwd()) or get_latest_commit_id()[:7]
+#     config['version'] = 'docker-{}'.format(version)
+#     save_frontend_config(config)
 
 IMAGE_NAMES = ['emastercard_api', 'nginx', 'mysql']
 
@@ -237,40 +239,11 @@ def update_version(current_version, tags):
         
     return '{}-{}'.format(frontend_version, revision)
 
-def get_host_address():
-    cmd = os.popen('ip route get 8.8.8.8')
-    routing_info = cmd.readline()
-    if cmd.close() is not None:
-        return '127.0.0.1'
-    
-    try:
-        routing_info_parts = routing_info.split(' ')
-        src_index = routing_info_parts.index('src')
 
-        return routing_info_parts[src_index + 1]
-    except (ValueError, IndexError):
-        return '127.0.0.1'
-
-def generate_emastercard_config(emastercard_version, autodetect_host_address=False):
-    with open('web/config.json') as config_template:
-        with open('web/static/config.json', 'w') as config_file:
-            config = json.loads(config_template.read())
-            config['version'] = emastercard_version
-            config['apiURL'] = get_host_address() if autodetect_host_address else '127.0.0.1'
-
-            config_file.write(json.dumps(config))
-
-            return config
-
-def configure_host_address():
-    print('Configuring host address...')
-    config = generate_emastercard_config(load_version_info()['version'], autodetect_host_address=True)
-    print("Updated host address in web/static/config.json to {}".format(config['apiURL']))
    
 def build():
     if os.path.exists('tmp/db'):
-        # Had database files in directory users may consider clearing.
-        # Have to move to somewhere somewhat secure.
+        
         print('Moving database directory to /opt/emastercard...')
         run('sudo systemctl stop emastercard', die_on_fail=False)
 
@@ -295,7 +268,7 @@ def build():
         
         tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
-            tags['e-Mastercard'] = update_repo('https://github.com/EGPAFMalawiHIS/e-Mastercard.git', branch='development', tag=tags.get('e-Mastercard'))
+            tags['e-Mastercard'] = update_repo('https://github.com/HISMalawi/HIS-Core-release.git', branch='main', tag=tags.get('e-Mastercard'))
             build_emastercard_frontend(FOLLOW_TAGS)
 
         if UPDATE:
@@ -306,7 +279,6 @@ def build():
     else:
         load_images()
 
-    generate_emastercard_config(version)
 
     if SYSTEMD_CONFIG:
         setup_autostart()
@@ -335,9 +307,6 @@ def main():
     if args.update: UPDATE = True
     if args.no_systemd_config: SYSTEMD_CONFIG = False
 
-    if args.configure_host_address:
-        configure_host_address()
-        exit()
         
     if args.package_for_offline:
         make_offline_package()
