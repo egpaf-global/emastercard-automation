@@ -1,5 +1,4 @@
 /api/api-config.yml
 /api/migration-config.yml
-/web/static/config.json
 /tmp/
 *.sql
