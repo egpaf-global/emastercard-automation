@@ -9,6 +9,7 @@ COPY tmp/BHT-EMR-API/Gemfile /opt/BHT-EMR-API/Gemfile
 COPY tmp/BHT-EMR-API/vendor /opt/BHT-EMR-API/vendor
 RUN bundle install --local
 COPY tmp/BHT-EMR-API /opt/BHT-EMR-API
+COPY api/puma.rb /opt/BHT-EMR-API/config/puma.rb
 
 COPY api/bin/migration.sh /usr/bin/migration.sh
 RUN chmod +x /usr/bin/migration.sh
