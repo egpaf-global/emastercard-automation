@@ -1,4 +1,4 @@
-FROM ruby:2.5.3
+FROM ruby:2.5.6
 
 RUN apt-get update
 RUN apt-get install build-essential default-mysql-client default-libmysqlclient-dev pv -y
