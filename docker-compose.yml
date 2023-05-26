@@ -25,7 +25,8 @@ services:
       - mysqldb:mysqldb
     environment:
       WEB_CONCURRENCY: 6
-      RAILS_MAX_THREADS: 1
+      RAILS_MAX_THREADS: 5
+      RAILS_MIN_THREADS: 1
   web:
     image: nginx
     container_name: emastercard_nginx

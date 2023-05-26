@@ -1,4 +1,4 @@
-FROM ruby:2.5.3
+FROM ruby:2.5.6
 
 RUN apt-get update
 RUN apt-get install build-essential default-mysql-client default-libmysqlclient-dev pv -y
@@ -9,6 +9,7 @@ COPY tmp/BHT-EMR-API/Gemfile /opt/BHT-EMR-API/Gemfile
 COPY tmp/BHT-EMR-API/vendor /opt/BHT-EMR-API/vendor
 RUN bundle install --local
 COPY tmp/BHT-EMR-API /opt/BHT-EMR-API
+COPY api/puma.rb /opt/BHT-EMR-API/config/puma.rb
 
 COPY api/bin/migration.sh /usr/bin/migration.sh
 RUN chmod +x /usr/bin/migration.sh
@@ -33,6 +34,9 @@ RUN chmod +x /usr/bin/fix_loose_dispensations.sh
 
 COPY api/bin/change_database_password.sh /usr/bin/change_database_password.sh
 RUN chmod +x /usr/bin/change_database_password.sh
+
+COPY api/bin/fix_vl_ldl_results.sh /usr/bin/fix_vl_ldl_results.sh
+RUN chmod +x /usr/bin/fix_vl_ldl_results.sh
 
 COPY api/bin/entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
