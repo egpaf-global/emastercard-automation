@@ -1,1 +1,0 @@
-# LOS Release notes example
