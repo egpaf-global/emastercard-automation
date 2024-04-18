@@ -6,10 +6,10 @@ if [ -t 0 ]; then
     exit 255
 fi
 
-USERNAME=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['${ENV}']['username']"`
-PASSWORD=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['${ENV}']['password']"`
-DATABASE=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['${ENV}']['database']"`
-HOST=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['${ENV}']['host']"`
+USERNAME=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['development']['username']"`
+PASSWORD=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['development']['password']"`
+DATABASE=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['development']['database']"`
+HOST=`ruby -ryaml -e "puts YAML.safe_load(File.read('/opt/BHT-EMR-API/config/database.yml'), aliases: true)['development']['host']"`
 
 cd /opt/BHT-EMR-API
 
