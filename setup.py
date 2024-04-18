@@ -69,17 +69,17 @@ def read_tag(repo):
 def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
     # update_emastercard_frontent_config(follow_tags=follow_tags)
-    os.chdir('tmp/HIS-Core-release')
+    os.chdir('tmp/EMC-Releases')
     #run('npm install')
     #run('npm run build')
     os.chdir('../..')
     # os.system('ls')
     run('rm -Rv web/static/*')
-    run('cp -Rv tmp/HIS-Core-release/* web/static')
+    run('cp -Rv tmp/EMC-Releases/* web/static')
     run('cp -v web/static/emc.config.json.example web/static/config.json')
     print('-----------------')
 
-# def update_emastercard_frontent_config(deploy_path='tmp/HIS-Core-release/config.json', follow_tags=True):
+# def update_emastercard_frontent_config(deploy_path='tmp/EMC-Releases/config.json', follow_tags=True):
 #     def get_latest_commit_id():
 #         return read_gitcmd_output('.', 'log').split()[1]
                          
