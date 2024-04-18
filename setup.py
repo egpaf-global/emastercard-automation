@@ -269,7 +269,7 @@ def build():
         
         tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
-            tags['e-Mastercard'] = update_repo('https://github.com/HISMalawi/HIS-Core-release.git', branch='main', tag=tags.get('e-Mastercard'))
+            tags['e-Mastercard'] = update_repo('https://github.com/HISMalawi/EMC-Releases.git', branch='main', tag=tags.get('e-Mastercard'))
             build_emastercard_frontend(FOLLOW_TAGS)
 
         if UPDATE:
