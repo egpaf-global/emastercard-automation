@@ -13,6 +13,7 @@ A set of tools to ease upgrade of emastercard 3.* to the new emastercard.
       cp api/api-config.yml.example api/api-config.yml
       cp api/migration-config.yml.example api/migration-config.yml
     ```
+    <h1 style="color:red;">Please use new configurations going forward.</h1>
 
 3. Edit the two configuration files created in the previous step setting the database
    passwords for the API and the old eMastercard application.
