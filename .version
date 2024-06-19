@@ -1,8 +1,8 @@
 {
-  "version": "v5.4.1-emc",
+  "version": "v5.5.0-alpha",
   "tags": {
-    "BHT-EMR-API": "v5.0.1",
+    "BHT-EMR-API": "v5.1.0-alpha",
     "eMastercard2Nart": "",
-    "e-Mastercard": "v5.4.1-emc"
+    "e-Mastercard": "v5.5.0-alpha"
   }
 }

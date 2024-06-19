@@ -76,7 +76,7 @@ def build_emastercard_frontend(follow_tags):
     # os.system('ls')
     run('rm -Rv web/static/*')
     run('cp -Rv tmp/EMC-Releases/* web/static')
-    run('cp -v web/static/emc.config.json.example web/static/config.json')
+   #run('cp -v web/static/emc.config.json.example web/static/config.json')
     print('-----------------')
 
 # def update_emastercard_frontent_config(deploy_path='tmp/EMC-Releases/config.json', follow_tags=True):

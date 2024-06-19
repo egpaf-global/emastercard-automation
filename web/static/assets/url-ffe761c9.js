@@ -1,0 +1,1 @@
+const r=t=>/^(https?:|mailto:|tel:)/.test(t);function o(t,n){return r(t)?t:r(n)?n:"/"+"".concat(n,"/").concat(t).split("/").filter(Boolean).join("/")}function l(t,n){return n?t+"?"+Object.entries(n).map(([e,i])=>"".concat(e,"=").concat(i)).join("&"):t}export{l as p,o as r};
