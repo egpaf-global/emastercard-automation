@@ -1,8 +1,8 @@
 {
-  "version": "v2024.Q2.R2",
+  "version": "v2024.Q2.R3",
   "tags": {
     "BHT-EMR-API": "v5.1.0-delta",
     "eMastercard2Nart": "",
-    "e-Mastercard": "v2024.Q2.R2"
+    "e-Mastercard": "2024.Q2.R3"
   }
 }
