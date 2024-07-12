@@ -1,15 +1,17 @@
 version: '3'
+ 
 services:
+ 
   mysqldb:
-    image: mysql:8
+    image: mysql:8.0
     container_name: emastercard_db
-    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - /opt/emastercard/db:/var/lib/mysql
+      - /opt/emastercard/db_eight:/var/lib/mysql
     ports:
       - "3305:3306"
+ 
   api:
     image: emastercard_api
     container_name: emastercard_api
@@ -21,12 +23,11 @@ services:
       - "9000:3000"
     depends_on:
       - mysqldb
-    links:
-      - mysqldb:mysqldb
     environment:
       WEB_CONCURRENCY: 6
       RAILS_MAX_THREADS: 5
       RAILS_MIN_THREADS: 1
+ 
   web:
     image: nginx
     container_name: emastercard_nginx
