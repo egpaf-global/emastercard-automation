@@ -9,6 +9,8 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 200 } %>
   checkout_timeout: 10000
   timeout: 10000
+  variables:
+    sql_mode: STRICT_TRANS_TABLES
 
 development:
   <<: *default
