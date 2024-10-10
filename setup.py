@@ -12,6 +12,7 @@ OFFLINE = False
 REBUILD_FRONTEND = False
 SYSTEMD_CONFIG = True   # Configure systemd to autostart the emastercard application
 UPDATE = False
+IMAGE_NAMES = ['emastercard_api', 'nginx', 'mysql']
 
 def run(command, die_on_fail=True):
     print('Running: {command}'.format(command=command))
@@ -68,36 +69,16 @@ def read_tag(repo):
 
 def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
-    # update_emastercard_frontent_config(follow_tags=follow_tags)
-    os.chdir('tmp/EMC-Releases')
-    #run('npm install')
-    #run('npm run build')
+    os.chdir('tmp/emc-new-arch')
+    run('npm install --global @ionic/cli@latest')
+    run('npm install --global @vue/cli@latest')
+    run('npm install')
+    run('ionic build')
     os.chdir('../..')
-    # os.system('ls')
-    run('rm -Rv web/static/*')
-    run('cp -Rv tmp/EMC-Releases/* web/static')
-   #run('cp -v web/static/emc.config.json.example web/static/config.json')
+    run('pwd')
+    run('rm -rfv web/static/*')
+    run('cp -rv tmp/emc-new-arch/dist/* web/static/')
     print('-----------------')
-
-# def update_emastercard_frontent_config(deploy_path='tmp/EMC-Releases/config.json', follow_tags=True):
-#     def get_latest_commit_id():
-#         return read_gitcmd_output('.', 'log').split()[1]
-                         
-#     def read_frontend_config():
-#         with open('web/config.json') as fin:
-#             return json.loads(fin.read())
-
-#     def save_frontend_config(config):
-#         with open(deploy_path, 'w') as fout:
-#             fout.write(json.dumps(config))
-
-#     print('Updating frontend configuration...')
-#     config = read_frontend_config()
-#     version = read_tag(os.getcwd()) or get_latest_commit_id()[:7]
-#     config['version'] = 'docker-{}'.format(version)
-#     save_frontend_config(config)
-
-IMAGE_NAMES = ['emastercard_api', 'nginx', 'mysql']
 
 def make_offline_package():
     print('Dumping docker images...')
@@ -269,7 +250,7 @@ def build():
         
         tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
-            tags['e-Mastercard'] = update_repo('https://github.com/HISMalawi/EMC-Releases.git', branch='main', tag=tags.get('e-Mastercard'))
+            tags['e-Mastercard'] = update_repo('https://github.com/EGPAFMalawiHIS/emc-new-arch.git', branch='main', tag=tags.get('e-Mastercard'))
             build_emastercard_frontend(FOLLOW_TAGS)
 
         if UPDATE:
