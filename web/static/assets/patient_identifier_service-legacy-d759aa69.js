@@ -1,0 +1,1 @@
+System.register(["./index-legacy-084a8278.js"],(function(t,e){"use strict";var i;return{setters:[t=>{i=t.E}],execute:function(){t("P",class{static create(t,e,n){return i.postJson("patient_identifiers",{identifier:n,identifier_type:e,patient_id:t})}static update(t,e){return i.putJson(`patient_identifiers/${t}`,{identifier:e})}})}}}));
