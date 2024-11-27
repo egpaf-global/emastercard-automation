@@ -17,6 +17,7 @@ services:
     container_name: emastercard_api
     volumes:
       - ./api/api-config.yml:/opt/BHT-EMR-API/config/database.yml
+      - ./api/application.yml:/opt/BHT-EMR-API/config/application.yml
       - ./api/migration-config.yml:/opt/eMastercard2Nart/config.yaml
       - ./tmp:/opt/eMastercard2Nart/tmp
     ports:
