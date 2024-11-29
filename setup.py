@@ -72,7 +72,7 @@ def build_emastercard_frontend(follow_tags):
     os.chdir('tmp/emc-new-arch')
     run('npm install --global @ionic/cli@latest')
     run('npm install --global @vue/cli@latest')
-    run('npm install')
+    run('npm install --legacy-peer-deps')
     run('ionic build')
     os.chdir('../..')
     run('pwd')
