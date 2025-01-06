@@ -1,1 +1,0 @@
-import{F as i}from"./index-d405c632.js";class s{static create(t,e,r){return i.postJson("patient_identifiers",{identifier:r,identifier_type:e,patient_id:t})}static update(t,e){return i.putJson("patient_identifiers/".concat(t),{identifier:e})}}export{s as P};
