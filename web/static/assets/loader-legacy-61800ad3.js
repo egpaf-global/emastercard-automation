@@ -1,0 +1,1 @@
+System.register(["./index-legacy-2d6958b4.js"],(function(e,s){"use strict";var n;return{setters:[e=>{n=e.bn}],execute:function(){e("l",{show:async e=>(await n.create({message:e||"Loading...",spinner:"crescent",translucent:!0})).present(),async hide(){n.getTop().then((e=>e?n.dismiss():null))}})}}}));
