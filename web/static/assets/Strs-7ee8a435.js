@@ -1,1 +1,0 @@
-function r(t){return t.split(/(?=[A-Z])/).join("_").toLowerCase()}function n(t){const e="".concat(t).toUpperCase();return e==="M"||e==="MALE"?"Male":e==="F"||e==="FEMALE"?"Female":/fbf|fnp|fp/i.test(t)?e:t}export{r as a,n as t};

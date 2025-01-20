@@ -1,0 +1,1 @@
+function t(n){return!!"".concat(n).match(/(^\s*$|Unknown|None|undefined|null)/i)}function r(n){return n.split(/(?=[A-Z])/).join("_").toLowerCase()}function o(n){const e="".concat(n).toUpperCase();return e==="M"||e==="MALE"?"Male":e==="F"||e==="FEMALE"?"Female":/fbf|fnp|fp/i.test(n)?e:n}export{r as a,t as i,o as t};

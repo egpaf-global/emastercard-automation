@@ -1,0 +1,1 @@
+System.register([],(function(n,e){"use strict";return{execute:function(){n({a:function(n){return n.split(/(?=[A-Z])/).join("_").toLowerCase()},i:function(n){return!!`${n}`.match(/(^\s*$|Unknown|None|undefined|null)/i)},t:function(n){const e=`${n}`.toUpperCase();return"M"===e||"MALE"===e?"Male":"F"===e||"FEMALE"===e?"Female":/fbf|fnp|fp/i.test(n)?e:n}})}}}));
