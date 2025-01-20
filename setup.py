@@ -70,8 +70,10 @@ def read_tag(repo):
 def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
     os.chdir('tmp/emc-new-arch')
-    run('npm install --global @ionic/cli@latest')
-    run('npm install --global @vue/cli@latest')
+    if os.system('npm list -g @ionic/cli') != 0:
+        run('npm install --global @ionic/cli@latest')
+    if os.system('npm list -g @vue/cli') != 0:
+        run('npm install --global @vue/cli@latest')
     run('npm install --legacy-peer-deps')
     run('ionic build')
     os.chdir('../..')
