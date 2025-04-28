@@ -1,8 +1,8 @@
 {
-  "version": "v2025.Q1.R3",
+  "version": "v2025.Q1.R4",
   "tags": {
-    "BHT-EMR-API": "v5.5.2",
+    "BHT-EMR-API": "v5.5.3",
     "eMastercard2Nart": "",
-    "e-Mastercard": "v025.Q1.R3"
+    "e-Mastercard": "v2025.Q1.R4"
   }
 }
