@@ -243,7 +243,7 @@ def build():
 
     if not OFFLINE:
         setup_dependencies()
-        tags['BHT-EMR-API'] = update_repo('https://github.com/egpaf-global/emr-DRC.git', branch='development', tag=tags.get('BHT-EMR-API'))
+        tags['BHT-EMR-API'] = update_repo('https://github.com/egpaf-global/emr-DRC.git', branch='main', tag=tags.get('BHT-EMR-API'))
         os.chdir('tmp/BHT-EMR-API')
         run('git describe > HEAD')
         os.chdir('../..')
