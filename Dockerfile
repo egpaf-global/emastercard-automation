@@ -3,13 +3,13 @@ FROM ruby:3.2.0
 RUN apt-get update
 RUN apt-get install build-essential default-mysql-client default-libmysqlclient-dev pv -y
 
-RUN mkdir /opt/BHT-EMR-API
-WORKDIR /opt/BHT-EMR-API
-COPY tmp/BHT-EMR-API/Gemfile /opt/BHT-EMR-API/Gemfile
-COPY tmp/BHT-EMR-API/vendor /opt/BHT-EMR-API/vendor
+RUN mkdir /opt/emr-DRC
+WORKDIR /opt/emr-DRC
+COPY tmp/emr-DRC/Gemfile /opt/emr-DRC/Gemfile
+COPY tmp/emr-DRC/vendor /opt/emr-DRC/vendor
 RUN bundle install --local
-COPY tmp/BHT-EMR-API /opt/BHT-EMR-API
-COPY api/puma.rb /opt/BHT-EMR-API/config/puma.rb
+COPY tmp/emr-DRC /opt/emr-DRC
+COPY api/puma.rb /opt/emr-DRC/config/puma.rb
 
 COPY api/bin/migration.sh /usr/bin/migration.sh
 RUN chmod +x /usr/bin/migration.sh

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /opt/BHT-EMR-API
+cd /opt/emr-DRC
 bin/initial_database_setup.sh development moh

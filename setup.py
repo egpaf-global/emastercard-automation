@@ -213,10 +213,10 @@ def update_version(current_version, tags):
         
     revision = int(revision)
     
-    if tags['e-Mastercard'] == frontend_version:
+    if tags['e-mastercard-core'] == frontend_version:
         revision += 1
     else:
-        frontend_version = tags['e-Mastercard']
+        frontend_version = tags['e-mastercard-core']
         revision = 0
         
     return '{}-{}'.format(frontend_version, revision)
@@ -243,14 +243,14 @@ def build():
 
     if not OFFLINE:
         setup_dependencies()
-        tags['BHT-EMR-API'] = update_repo('https://github.com/egpaf-global/emr-DRC.git', branch='main', tag=tags.get('BHT-EMR-API'))
-        os.chdir('tmp/BHT-EMR-API')
+        tags['emr-DRC'] = update_repo('https://github.com/egpaf-global/emr-DRC.git', branch='main', tag=tags.get('emr-DRC'))
+        os.chdir('tmp/emr-DRC')
         run('git describe > HEAD')
         os.chdir('../..')
         
         tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
-            tags['e-Mastercard'] = update_repo('https://github.com/egpaf-global/e-mastercard-core.git', branch='main', tag=tags.get('e-Mastercard'))
+            tags['e-mastercard-core'] = update_repo('https://github.com/egpaf-global/e-mastercard-core-core.git', branch='main', tag=tags.get('e-mastercard-core'))
             build_emastercard_frontend(FOLLOW_TAGS)
 
         if UPDATE:

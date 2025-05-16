@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /opt/BHT-EMR-API
+cd /opt/emr-DRC
 rails r ./bin/vl_migration.rb

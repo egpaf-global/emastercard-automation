@@ -5,7 +5,7 @@ of the application or as the application is operating. Possible
 solutions for the problems are provided. Please note the primary
 focus here is the backend pieces of the application and not user
 interface related problems, for those you may want to look at the
-[e-Mastercard](https://github.com/EGPAFMalawiHIS/emastercard)
+[e-mastercard-core](https://github.com/EGPAFMalawiHIS/emastercard)
 repository.
 
 ## Accessing application's logs
@@ -173,7 +173,7 @@ do this as follows:
 
 $ sudo docker-compose exec api bash
 
-$ cd /opt/BHT-EMR-API
+$ cd /opt/emr-DRC
 
 $ rails dbconsole   # Then enter database password
 
