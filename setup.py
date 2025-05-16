@@ -69,7 +69,7 @@ def read_tag(repo):
 
 def build_emastercard_frontend(follow_tags):
     print('Building eMastercard frontend; this may take a while...')
-    os.chdir('tmp/emc-new-arch')
+    os.chdir('tmp/e-mastercard-core')
     run('npm install --global @ionic/cli@latest')
     run('npm install --global @vue/cli@latest')
     run('npm install --legacy-peer-deps')
@@ -77,7 +77,7 @@ def build_emastercard_frontend(follow_tags):
     os.chdir('../..')
     run('pwd')
     run('rm -rfv web/static/*')
-    run('cp -rv tmp/emc-new-arch/dist/* web/static/')
+    run('cp -rv tmp/e-mastercard-core/dist/* web/static/')
     print('-----------------')
 
 def make_offline_package():
@@ -250,7 +250,7 @@ def build():
         
         tags['eMastercard2Nart'] = update_repo('https://github.com/HISMalawi/eMastercard2Nart.git', branch='master', tag=tags.get('eMastercard2Nart'))
         if REBUILD_FRONTEND:
-            tags['e-mastercard-core'] = update_repo('https://github.com/egpaf-global/e-mastercard-core-core.git', branch='main', tag=tags.get('e-mastercard-core'))
+            tags['e-mastercard-core'] = update_repo('https://github.com/egpaf-global/e-mastercard-core.git', branch='main', tag=tags.get('e-mastercard-core'))
             build_emastercard_frontend(FOLLOW_TAGS)
 
         if UPDATE:

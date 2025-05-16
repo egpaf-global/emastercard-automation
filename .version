@@ -1,7 +1,7 @@
 {
   "version": "v1.0.0",
   "tags": {
-    "emr-DRC": "v1.1.0",
+    "emr-DRC": "v1.1.1",
     "eMastercard2Nart": "",
     "e-mastercard-core": "v1.0.0"
   }
